@@ -1,13 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {  ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { expect } from '@jest/globals';
 import { SessionService } from 'src/app/services/session.service';
@@ -15,8 +9,19 @@ import { SessionApiService } from '../../services/session-api.service';
 import { TeacherService } from 'src/app/services/teacher.service';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Routes } from '@angular/router';
 
 import { FormComponent } from './form.component';
+
+const routes: Routes = [
+  { path: 'sessions', component: FormComponent }
+];
 
 describe('FormComponent', () => {
   let component: FormComponent;
@@ -41,9 +46,15 @@ describe('FormComponent', () => {
       declarations: [FormComponent],
       imports: [
         ReactiveFormsModule,
-        RouterTestingModule,
+        RouterTestingModule.withRoutes(routes),
         MatSnackBarModule,
-        HttpClientModule
+        HttpClientModule,
+        MatCardModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        NoopAnimationsModule
       ],
       providers: [
         {
@@ -85,7 +96,7 @@ describe('FormComponent', () => {
   });
 
   it('should initialize form for update', () => {
-    const routerSpy = jest.spyOn(router, 'url', 'get').mockReturnValue('/sessions/update/1');
+    jest.spyOn(router, 'url', 'get').mockReturnValue('/sessions/update/1');
     component.ngOnInit();
     expect(component.onUpdate).toBeTruthy();
     expect(sessionApiService.detail).toHaveBeenCalled();
@@ -99,12 +110,16 @@ describe('FormComponent', () => {
       teacher_id: 1,
       description: 'Test Description'
     });
+
+    const navigateSpy = jest.spyOn(router, 'navigate');
     component.submit();
+
     expect(sessionApiService.create).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['sessions']);
   });
 
   it('should submit form for update', () => {
-    const routerSpy = jest.spyOn(router, 'url', 'get').mockReturnValue('/sessions/update/1');
+    jest.spyOn(router, 'url', 'get').mockReturnValue('/sessions/update/1');
     component.ngOnInit();
     component.sessionForm?.patchValue({
       name: 'Updated Session',
@@ -112,8 +127,12 @@ describe('FormComponent', () => {
       teacher_id: 1,
       description: 'Updated Description'
     });
+
+    const navigateSpy = jest.spyOn(router, 'navigate');
     component.submit();
+
     expect(sessionApiService.update).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['sessions']);
   });
 
   it('should validate required fields', () => {

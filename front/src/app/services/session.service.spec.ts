@@ -15,7 +15,7 @@ describe('SessionService', () => {
   });
 
   it('should initialize with isLogged as false', () => {
-    expect(service.isLogged).toBeFalsy();
+    expect(service.isLogged).toBe(false);
     expect(service.sessionInformation).toBeUndefined();
   });
 
@@ -33,7 +33,7 @@ describe('SessionService', () => {
 
       service.logIn(mockUser);
 
-      expect(service.isLogged).toBeTruthy();
+      expect(service.isLogged).toBe(true);
       expect(service.sessionInformation).toEqual(mockUser);
     });
 
@@ -72,7 +72,7 @@ describe('SessionService', () => {
 
       service.logOut();
 
-      expect(service.isLogged).toBeFalsy();
+      expect(service.isLogged).toBe(false);
       expect(service.sessionInformation).toBeUndefined();
     });
 

@@ -43,4 +43,48 @@ describe('Create session spec', () => {
 
     cy.url().should('include', '/sessions')
   })
+
+  it('should handle registration errors', () => {
+    cy.visit('/register')
+
+    cy.intercept('POST', '/api/auth/register', {
+      statusCode: 400,
+      body: {
+        message: 'Email already exists'
+      }
+    }).as('registerError')
+
+    cy.get('input[formControlName=firstName]').type("Test")
+    cy.get('input[formControlName=lastName]').type("User")
+    cy.get('input[formControlName=email]').type("existing@email.com")
+    cy.get('input[formControlName=password]').type("test1234")
+
+    cy.get('button[type="submit"]').click()
+
+    cy.get('span.error.ml2').should('exist')
+      .and('contain.text', 'An error occurred')
+  })
+
+  it('should validate all form fields', () => {
+    cy.visit('/register')
+
+    // Test champs vides
+    cy.get('button[type="submit"]').should('be.disabled')
+
+    // Test validation email
+    cy.get('input[formControlName=email]').type('invalid-email')
+    cy.get('mat-error').should('exist')
+
+    // Test validation mot de passe
+    cy.get('input[formControlName=password]').type('short')
+    cy.get('mat-error').should('exist')
+
+    // Test validation prénom
+    cy.get('input[formControlName=firstName]').type('A').clear()
+    cy.get('mat-error').should('exist')
+
+    // Test validation nom
+    cy.get('input[formControlName=lastName]').type('B').clear()
+    cy.get('mat-error').should('exist')
+  })
 });

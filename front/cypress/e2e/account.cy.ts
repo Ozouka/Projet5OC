@@ -111,5 +111,62 @@ describe('Account details spec', () => {
     cy.get('button').should('be.visible').and('contain.text', 'Delete')
 
   })
+
+  it('should handle profile loading error', () => {
+    cy.visit('/login')
+
+    cy.intercept('POST', '/api/auth/login', {
+      body: {
+        id: 1,
+        username: 'userName',
+        firstName: 'firstName',
+        lastName: 'lastName',
+        admin: true
+      }
+    })
+
+    cy.get('input[formControlName=email]').type("yoga@studio.com")
+    cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
+
+    cy.intercept('GET', '/api/user/1', {
+      statusCode: 500,
+      body: { message: 'Error loading profile' }
+    }).as('profileError')
+
+    cy.get('span.link[routerlink="me"]').click()
+
+    cy.get('mat-card-title').should('exist')
+    cy.get('mat-card-content div').should('not.exist')
+  })
+
+  it('should handle account deletion', () => {
+    cy.visit('/login')
+
+    cy.intercept('POST', '/api/auth/login', {
+      body: {
+        id: 2,
+        username: 'user',
+        firstName: 'User',
+        lastName: 'Test',
+        admin: false
+      }
+    })
+
+    cy.get('input[formControlName=email]').type("user@test.com")
+    cy.get('input[formControlName=password]').type("test!1234")
+    cy.get('button[type="submit"]').click()
+
+    cy.get('span.link[routerlink="me"]').click()
+
+    cy.intercept('DELETE', '/api/user/2', {
+      statusCode: 200
+    }).as('deleteUser')
+
+    cy.get('button[color="warn"]').click()
+
+    cy.wait('@deleteUser')
+    cy.url().should('include', '/login')
+  })
 })
+
 
