@@ -1,4 +1,4 @@
-/* import './account.cy'
+import './account.cy'
 import './create-account.cy'
 import './disconnect.cy'
 import './login.cy'
@@ -8,4 +8,4 @@ import './teacher.cy'
 
 describe('All Tests', () => {
 })
- */
+

@@ -1,8 +1,8 @@
-/**
- * @type {Cypress.PluginConfig}
- */
- import * as registerCodeCoverageTasks from '@cypress/code-coverage/task';
+/// <reference types="cypress" />
 
- export default (on, config) => {
-   return registerCodeCoverageTasks(on, config);
- };
+const coverageTask = require('@cypress/code-coverage/task')
+
+module.exports = (on: any, config: any) => {
+  coverageTask(on, config)
+  return config
+}
