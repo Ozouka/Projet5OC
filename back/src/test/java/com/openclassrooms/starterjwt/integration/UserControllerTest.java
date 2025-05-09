@@ -67,4 +67,57 @@ public class UserControllerTest {
                 .header("Authorization", "Bearer valid-token"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @WithMockUser
+    void getUserById_ShouldReturnBadRequest_WhenIdIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/user/abc"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "test@test.com")
+    void deleteUser_ShouldReturnOk_WhenUserExistsAndEmailMatches() throws Exception {
+        Long userId = 1L;
+        User user = new User();
+        user.setId(userId);
+        user.setEmail("test@test.com");
+        user.setLastName("Snow");
+        user.setFirstName("John");
+        user.setPassword("test1234");
+        when(userService.findById(userId)).thenReturn(user);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/user/" + userId))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "test@test.com")
+    void deleteUser_ShouldReturnNotFound_WhenUserDoesNotExist() throws Exception {
+        Long userId = 999L;
+        when(userService.findById(userId)).thenReturn(null);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/user/" + userId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "test@test.com")
+    void deleteUser_ShouldReturnBadRequest_WhenIdIsInvalid() throws Exception {
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/user/abc"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "other@email.com")
+    void deleteUser_ShouldReturnUnauthorized_WhenEmailDoesNotMatch() throws Exception {
+        Long userId = 1L;
+        User user = new User();
+        user.setId(userId);
+        user.setEmail("test@test.com");
+        user.setLastName("Snow");
+        user.setFirstName("John");
+        user.setPassword("test1234");
+        when(userService.findById(userId)).thenReturn(user);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/user/" + userId))
+                .andExpect(status().isUnauthorized());
+    }
 } 
