@@ -1,8 +1,8 @@
-package com.openclassrooms.starterjwt.payload.request;
+package com.openclassrooms.starterjwt.dto;
 
 import javax.validation.constraints.NotBlank;
 
-public class LoginRequest {
+public class LoginRequestDTO {
 	@NotBlank
   private String email;
 

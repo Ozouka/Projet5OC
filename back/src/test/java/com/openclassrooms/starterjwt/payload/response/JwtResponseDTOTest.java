@@ -1,12 +1,13 @@
 package com.openclassrooms.starterjwt.payload.response;
 
+import com.openclassrooms.starterjwt.dto.JwtResponseDTO;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class JwtResponseTest {
+class JwtResponseDTOTest {
     @Test
     void testAllGettersAndSetters() {
-        JwtResponse jwt = new JwtResponse("tok123", 1L, "user@test.com", "John", "Doe", true);
+        JwtResponseDTO jwt = new JwtResponseDTO("tok123", 1L, "user@test.com", "John", "Doe", true);
         assertThat(jwt.getToken()).isEqualTo("tok123");
         assertThat(jwt.getId()).isEqualTo(1L);
         assertThat(jwt.getUsername()).isEqualTo("user@test.com");

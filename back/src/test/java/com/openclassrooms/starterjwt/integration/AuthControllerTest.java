@@ -12,8 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.openclassrooms.starterjwt.payload.request.LoginRequest;
-import com.openclassrooms.starterjwt.payload.request.SignupRequest;
+import com.openclassrooms.starterjwt.dto.LoginRequestDTO;
+import com.openclassrooms.starterjwt.dto.SignupRequestDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -28,14 +28,14 @@ public class AuthControllerTest {
     @Test
     void login_ShouldReturnToken_WhenValidCredentials() throws Exception {
         // GIVEN
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("yoga@studio.com");
-        loginRequest.setPassword("test!1234");
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
+        loginRequestDTO.setEmail("yoga@studio.com");
+        loginRequestDTO.setPassword("test!1234");
 
         // WHEN & THEN
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                .content(objectMapper.writeValueAsString(loginRequestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").exists());
     }
@@ -43,46 +43,46 @@ public class AuthControllerTest {
     @Test
     void register_ShouldReturn400_WhenInvalidRequest() throws Exception {
         // GIVEN
-        SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setEmail("invalid-email");
-        signupRequest.setFirstName("");
-        signupRequest.setLastName("");
-        signupRequest.setPassword("toto");
+        SignupRequestDTO signupRequestDTO = new SignupRequestDTO();
+        signupRequestDTO.setEmail("invalid-email");
+        signupRequestDTO.setFirstName("");
+        signupRequestDTO.setLastName("");
+        signupRequestDTO.setPassword("toto");
 
         // WHEN & THEN
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signupRequest)))
+                .content(objectMapper.writeValueAsString(signupRequestDTO)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void register_ShouldReturn400_WhenEmailAlreadyExists() throws Exception {
         // GIVEN
-        SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setEmail("yoga@studio.com");
-        signupRequest.setFirstName("Test");
-        signupRequest.setLastName("User");
-        signupRequest.setPassword("Test123!");
+        SignupRequestDTO signupRequestDTO = new SignupRequestDTO();
+        signupRequestDTO.setEmail("yoga@studio.com");
+        signupRequestDTO.setFirstName("Test");
+        signupRequestDTO.setLastName("User");
+        signupRequestDTO.setPassword("Test123!");
 
         // WHEN & THEN
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signupRequest)))
+                .content(objectMapper.writeValueAsString(signupRequestDTO)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void login_ShouldReturn401_WhenInvalidCredentials() throws Exception {
         // GIVEN
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("wrong@email.com");
-        loginRequest.setPassword("wrongpassword");
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
+        loginRequestDTO.setEmail("wrong@email.com");
+        loginRequestDTO.setPassword("wrongpassword");
 
         // WHEN & THEN
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                .content(objectMapper.writeValueAsString(loginRequestDTO)))
                 .andExpect(status().isUnauthorized());
     }
 } 

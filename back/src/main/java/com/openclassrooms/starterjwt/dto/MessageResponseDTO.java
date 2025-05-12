@@ -1,9 +1,9 @@
-package com.openclassrooms.starterjwt.payload.response;
+package com.openclassrooms.starterjwt.dto;
 
-public class MessageResponse {
+public class MessageResponseDTO {
   private String message;
 
-  public MessageResponse(String message) {
+  public MessageResponseDTO(String message) {
     this.message = message;
   }
 
